@@ -29,6 +29,7 @@ public:
 	 * Default constructor for string with optional capacity
 	 * Ex: String str;
 	 * Ex: String str();
+	 * Ex: String str(28);
 	 */
 	String(int cap = DEFAULT_STRING_CAPACITY);
 
@@ -36,6 +37,7 @@ public:
 	 * String constructor for a single char
 	 * Ex: String str = 'a';
 	 * Ex: String str('a');
+	 * Ex: String str('a', 28);
 	 */
 	String(const char, int cap = DEFAULT_STRING_CAPACITY);
 
@@ -43,12 +45,14 @@ public:
 	 * String constructor for C-Style strings
 	 * Ex: String str = "abc";
 	 * Ex: String str("abc");
+	 * Ex: String str("abc", 100);
 	 */
 	String(const char[], int cap = DEFAULT_STRING_CAPACITY);
 
 	/*
 	 * Copy constructor for string
 	 * Ex: String str = strcopy;
+	 * Ex: String str(strcopy, 50);
 	 */
 	String(const String&, int cap = DEFAULT_STRING_CAPACITY);
 
@@ -66,6 +70,7 @@ public:
 	/*
 	 * Compares two strings together
 	 * Ex: str1 == str2;
+	 * Ex: str1 != str2;
 	 */
 	bool operator == (const String&) const;
 	bool operator != (const String& rhs) const { return !(*this == rhs); };
@@ -90,7 +95,7 @@ public:
 	bool operator < (const String&) const;
 	bool operator > (const String& rhs) const { return rhs < *this; };
 	bool operator <= (const String& rhs) const { return (*this < rhs) || (*this == rhs); };
-	bool operator >= (const String& rhs) const { return (*this > rhs) || (*this == rhs); };
+	bool operator >= (const String& rhs) const { return (rhs < *this) || (*this == rhs); };
 
 	/*
 	 * Adds two strings together
@@ -100,18 +105,18 @@ public:
 	 * Ex: String result = left + '!';
 	 */
 	String operator + (const String&) const;
-	String operator + (char rhs) const { return *this + String(rhs); };
 	String operator + (const char rhs[]) const { return *this + String(rhs); };
+	String operator + (char rhs) const { return *this + String(rhs); };
 	String& operator += (const String& rhs) { return *this = *this + rhs; };
-	String& operator += (char rhs) { return *this = *this + String(rhs); };
 	String& operator += (const char rhs[]) { return *this = *this + String(rhs); };
+	String& operator += (char rhs) { return *this = *this + String(rhs); };
 
 	/*
 	 * Friend functions to add a char or char[] in front of a string
 	 * Ex: str = 't' + rhs;
 	 * Ex: str = "the " + rhs;
 	 */
-	friend String operator + (char lhs, const String& rhs) { return String(lhs) + rhs; };
+	friend String operator + (const char lhs, const String& rhs) { return String(lhs) + rhs; };
 	friend String operator + (const char lhs[], const String& rhs) { return String(lhs) + rhs; };
 
 	/*
@@ -119,15 +124,15 @@ public:
 	 * Ex: str = str1 - 5;
 	 * Ex: str -= 5;
 	 */
-	String operator - (int) const;
-	String& operator -= (int x) { return *this = *this - x; };
+	String operator - (const int) const;
+	String& operator -= (const int x) { return *this = *this - x; };
 
 	/*
 	 * Subtracts all instances of a char from a string
 	 * Ex: str - 'a';
 	 */
-	String operator - (char) const;
-	String& operator -= (char ch) { return *this = *this - ch; };
+	String operator - (const char) const;
+	String& operator -= (const char ch) { return *this = *this - ch; };
 
 	/*
 	 * Repeats a string a specified number of times with the multiplication operator
@@ -150,8 +155,8 @@ public:
 	 * bounds.
 	 * Ex: char c = str[1];
 	 */
-	char operator [] (int) const;
-	char& operator [] (int);
+	char operator [] (const int) const;
+	char& operator [] (const int);
 
 	/*
 	 * Inputs string with the >> operator
@@ -168,8 +173,9 @@ public:
 	/*
 	 * Finds the first occurance of a char in a string with zero offset
 	 * Ex: str.findchar('c');
+	 * Ex: str.findchar('c', 10);
 	 */
-	int findchar(char) const;
+	int findchar(const char, int offset = 0) const;
 
 	/*
 	 * Finds how many times a string occurs in another string
@@ -193,7 +199,7 @@ public:
 	 * Checks if null character is at end of string
 	 * Ex: str.isClosed() == true;
 	 */
-	bool isClosed() const;
+	bool isClosed() const { return s[length] == '\0'; };
 
 	/*
 	 * Reallocates string's capacity to a specified value

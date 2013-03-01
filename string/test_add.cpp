@@ -35,6 +35,7 @@ int main()
 		test[2] = test[0] + test[1];
 		assert(test[0] == "take part 1 ");
 		assert(test[1] == "and add part 2 to it");
+		std::cout << "'" << test[2] << "' " << test[2].getLength() << std::endl;
 		assert(test[2] == "take part 1 and add part 2 to it");
 		assert(test[2].getLength() == 32);
 		assert(test[2].isClosed());

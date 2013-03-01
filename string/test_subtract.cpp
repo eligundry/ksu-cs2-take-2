@@ -41,13 +41,11 @@ int main()
 		// Test string 1
 		assert(test[1] == "Hrp drp");
 		assert(test[1].getLength() == 7);
-		assert(test[1].getCapacity() == DEFAULT_STRING_CAPACITY);
 		assert(test[1].isClosed());
 
 		// Test string 2
 		assert(test[2] == "Herp derp");
 		assert(test[2].getLength() == 9);
-		assert(test[2].getCapacity() == DEFAULT_STRING_CAPACITY);
 		assert(test[2].isClosed());
 	}
 

@@ -3,7 +3,7 @@
  *
  *       Filename:  test_input.cpp
  *
- *    Description:  Test's string's input method
+ *    Description:  Tests string's input method
  *
  *        Version:  1.0
  *        Created:  02/24/2013 06:23:14 PM
@@ -31,6 +31,7 @@ int main()
 	{
 		String input;
 		in >> input;
+		std::cout << "'" << input << "' " << input.getLength() << std::endl;
 		assert(input == "Raw denim typewriter hella officia cillum, brooklyn vero lomo church-key beard ad pop-up.\n");
 	}
 

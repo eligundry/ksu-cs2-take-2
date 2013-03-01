@@ -32,6 +32,15 @@ int main()
 		assert(test.isClosed());
 	}
 
+	{
+		String test(60);
+		assert(test == "");
+		assert(test[0] == '\0');
+		assert(test.getLength() == 0);
+		assert(test.getCapacity() == 60);
+		assert(test.isClosed());
+	}
+
 	std::cout << "Completed testing string's default constructor!" << std::endl;
 
 	return 0;

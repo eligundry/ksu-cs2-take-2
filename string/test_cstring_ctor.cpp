@@ -72,10 +72,17 @@ int main()
 		// Test the maximum string size
 		// Setup
 		String s = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
-		assert(s == "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-		assert(s.getLength() == 128);
+		assert(s == "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+		assert(s.getLength() == 132);
 		assert(s[0] == 'a');
 		assert(s.isClosed());
+	}
+
+	{
+		String s("blah", 2);
+		assert(s == "blah");
+		assert(s.isClosed());
+		assert(s.getLength() == 4);
 	}
 
 	std::cout << "Completed testing string's C-Style string constructor." << std::endl;

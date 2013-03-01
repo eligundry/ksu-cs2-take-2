@@ -51,24 +51,24 @@ String::String(const char rhs, const int cap)
  */
 String::String(const char rhs[], const int cap)
 {
-	capacity = cap;
-	s = new char[cap];
-	length = 0;
-	bool restart = false;
+	// Calculate the length of the string
+	for (length = 0; rhs[length] != '\0'; ++length) {}
 
-	do {
-		for (; rhs[length] != '\0'; ++length) {
-			s[length] = rhs[length];
-		}
+	// Resize the capacity as needed
+	if (length > cap - 1) {
+		capacity = length + 1;
+	} else {
+		capacity = cap;
+	}
 
-		if (capacity < length) {
-			restart = true;
-			delete [] s;
-			s = new char[capacity *= 2];
-		}
-	} while (!restart);
+	s = new char[capacity];
 
-	s[length + 1] = '\0';
+	// Copy chars to string
+	for (int index = 0; rhs[index] != '\0'; ++index) {
+		s[index] = rhs[index];
+	}
+
+	s[length] = '\0';
 }
 
 /*
@@ -77,6 +77,7 @@ String::String(const char rhs[], const int cap)
  */
 String::String(const String& rhs, const int cap)
 {
+	// Check if capacity is shorter than length
 	if (cap <= rhs.length) {
 		capacity = rhs.length + 1;
 	} else {
@@ -85,6 +86,7 @@ String::String(const String& rhs, const int cap)
 
 	s = new char[capacity];
 
+	// Copy chars to string
 	for (length = 0; rhs.s[length] != '\0'; ++length) {
 		s[length] = rhs.s[length];
 	}
@@ -102,7 +104,7 @@ String::~String()
 }
 
 /*
- * Copy operator for string
+ * Assignment operator for string
  * Ex: String str = rhs_str;
  */
 String& String::operator = (String rhs)
@@ -121,8 +123,8 @@ bool String::operator == (const String& rhs) const
 		return false;
 	}
 
-	for (int i = 0; i < length; ++i) {
-		if (s[i] != rhs.s[i]) {
+	for (int index = 0; index < length; ++index) {
+		if (s[index] != rhs.s[index]) {
 			return false;
 		}
 	}
@@ -137,17 +139,17 @@ bool String::operator == (const String& rhs) const
 bool String::operator < (const String& rhs) const
 {
 	bool lessThan = false;
-	int i = 0;
+	int index = 0;
 
-	for (; s[i] != '\0' && rhs.s[i] != '\0'; ++i) {
-		if (s[i] > rhs.s[i]) return false;
-		if (s[i] < rhs.s[i]) lessThan = true;
+	for (; s[index] != '\0' && rhs.s[index] != '\0'; ++index) {
+		if (s[index] > rhs.s[index]) return false;
+		if (s[index] < rhs.s[index]) lessThan = true;
 	}
 
-	if (lessThan && (s[i] == '\0') && (rhs.s[i] == '\0')) return true;
-	if (lessThan && (rhs.s[i] == '\0')) return true;
-	if (!lessThan && (s[i] == '\0') && (rhs.s[i] == '\0')) return false;
-	if (s[i] == '\0') return true;
+	if (lessThan && (s[index] == '\0') && (rhs.s[index] == '\0')) return true;
+	if (lessThan && (rhs.s[index] == '\0')) return true;
+	if (!lessThan && (s[index] == '\0') && (rhs.s[index] == '\0')) return false;
+	if (s[index] == '\0') return true;
 
 	return false;
 }
@@ -158,19 +160,15 @@ bool String::operator < (const String& rhs) const
  */
 String String::operator + (const String& rhs) const
 {
-	int index = 0;
-	String result;
+	int index = length;
+	String result(*this, length + rhs.length + 1);
 	result.length = length + rhs.length;
-
-	for (; index < length; ++index) {
-		result.s[index] = s[index];
-	}
 
 	for (int rhsindex = 0; rhsindex < rhs.length; ++rhsindex, ++index) {
 		result.s[index] = rhs.s[rhsindex];
 	}
 
-	result.s[++index] = '\0';
+	result.s[index] = '\0';
 
 	return result;
 }
@@ -180,20 +178,19 @@ String String::operator + (const String& rhs) const
  * Ex: str = str1 - 5;
  * Ex: str -= 5;
  */
-String String::operator - (int x) const
+String String::operator - (const int x) const
 {
+	if (x == 0) {
+		return *this;
+	}
+
 	String result;
 
-	if (x == 0) {
-		result = *this;
-	} else if (x >= length) {
-		return result;
-	} else {
+	if (x < length) {
 		for (int i = 0; i < (length - x); ++i) {
 			result += s[i];
 		}
 	}
-
 
 	return result;
 }
@@ -203,8 +200,12 @@ String String::operator - (int x) const
  * Ex: str - 'a';
  * Ex: str -= 'a';
  */
-String String::operator - (char ch) const
+String String::operator - (const char ch) const
 {
+	if (findchar(ch) == -1) {
+		return *this;
+	}
+
 	String result;
 
 	for (int index = 0; index < length; ++index) {
@@ -222,7 +223,7 @@ String String::operator - (char ch) const
  */
 String String::operator * (const int x) const
 {
-	String result;
+	String result(length * x + 1);
 
 	for (int index = 0; index < x; ++index) {
 		result += *this;
@@ -237,7 +238,7 @@ String String::operator * (const int x) const
  */
 String String::operator / (const int x) const
 {
-	String result;
+	String result(capacity - x);
 
 	for (int index = x; index < length; ++index) {
 		result += s[index];
@@ -250,18 +251,18 @@ String String::operator / (const int x) const
  * Returns the character from a specified index. Returns null if out of bounds.
  * Ex: char c = str[1];
  */
-char String::operator [] (int index) const
+char String::operator [] (const int index) const
 {
-	if (index >= length || index < 0) {
+	if (index > length || index < 0) {
 		std::exit(0);
 	}
 
 	return s[index];
 }
 
-char& String::operator [] (int index)
+char& String::operator [] (const int index)
 {
-	if (index >= length || index < 0) {
+	if (index > length || index < 0) {
 		std::exit(0);
 	}
 
@@ -303,12 +304,13 @@ std::ostream& operator << (std::ostream& out, const String& str)
 /*
  * Finds the first occurance of a char in a string with zero offset
  * Ex: str.findchar('c');
+ * Ex: str.findchar('c', 10);
  */
-int String::findchar(char find) const
+int String::findchar(const char find, const int offset) const
 {
-	for (int i = 0; i < length; ++i) {
-		if (s[i] == find) {
-			return i;
+	for (int index = offset; index < length; ++index) {
+		if (s[index] == find) {
+			return index;
 		}
 	}
 
@@ -321,18 +323,17 @@ int String::findchar(char find) const
  */
 int String::findstr(const String& find) const
 {
+	if (find == *this) {
+		return 1;
+	} else if (length < find.length) {
+		return 0;
+	}
+
 	int result = 0;
 
-	if (length > find.length) {
-		for (int index = 0, findindex = 0; index < length; ++index, findindex = 0) {
-			while (s[index + findindex] == find.s[findindex] && findindex <= find.length) {
-				++findindex;
-
-				if (findindex == find.length) {
-					++result;
-					index += findindex;
-				}
-			}
+	for (int index = findchar(find.s[0]); index < length && index != -1; index = findchar(find.s[0], ++index)) {
+		if (substr(index, find.length) == find) {
+			++result;
 		}
 	}
 
@@ -340,23 +341,9 @@ int String::findstr(const String& find) const
 }
 
 /*
- * Checks if null character is at end of string
- * Ex: str.isClosed() == true;
+ * Reallocates string's capacity to a specified value
+ * Ex: str.reallocate(40);
  */
-bool String::isClosed() const
-{
-	switch (length) {
-		case 0:
-			return s[0] == '\0';
-			break;
-		case 1:
-			return s[1] == '\0';
-			break;
-		default:
-			return s[length + 1] == '\0';
-	}
-}
-
 void String::reallocate(const int cap)
 {
 	String temp(*this, cap);
@@ -389,9 +376,17 @@ void String::swap(String& str)
  */
 String String::substr(int left, int right) const
 {
-	if (right > length || right <= 0) {
+	String result;
+
+	if (right == 0 || (left + right) > length) {
 		right = length;
+	} else {
+		right += left;
 	}
 
-	return ((*this / left) - (length - right));
+	for (; left < right; ++left) {
+		result += s[left];
+	}
+
+	return result;
 }

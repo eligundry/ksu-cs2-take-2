@@ -30,6 +30,14 @@ int main()
 
 	{
 		String test[2];
+		test[0] = "eli";
+		test[1] = "eli gundry";
+		assert(test[0] <= test[1]);
+		assert(test[1] >= test[0]);
+	}
+
+	{
+		String test[2];
 		test[0] = "testing string is fun";
 		test[1] = "testing string is fun";
 		assert(test[0] <= test[1]);

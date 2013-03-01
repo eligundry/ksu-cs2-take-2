@@ -20,25 +20,37 @@
 
 int main()
 {
-	String test = "this is awesome";
-
 	{
-		String find = "eli";
-		assert(test.findstr(find) == 0);
+		String test = "";
+		assert(test.findstr("abc") == 0);
 	}
 
 	{
-		String find = "is";
-		assert(test.findstr(find) == 2);
+		String test = "Eli";
+		assert(test.findstr("Eli") == 1);
 	}
 
 	{
-		String find = "awe";
-		assert(test.findstr(find) == 1);
-	}
+		String test = "this is awesome";
 
-	{
-		assert(test.findstr("this") == 1);
+		{
+			String find = "eli";
+			assert(test.findstr(find) == 0);
+		}
+
+		{
+			String find = "is";
+			assert(test.findstr(find) == 2);
+		}
+
+		{
+			String find = "awe";
+			assert(test.findstr(find) == 1);
+		}
+
+		{
+			assert(test.findstr("this") == 1);
+		}
 	}
 
 	std::cout << "Completed testing the findstring method!" << std::endl;
