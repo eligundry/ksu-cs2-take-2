@@ -22,7 +22,7 @@ OPERATORS = test_relational_operators.out test_add.out
 SEARCH =  test_findstring.out test_findchar.out test_substr.out test_strip_nl.out
 IO =  test_output.out test_input.out
 DYNAMIC = test_swap.out test_force_overflow.out test_reallocate.out
-FUN = test_subtract.out test_division.out test_multiply.out
+FUN = test_subtract.out test_division.out test_multiply.out test_zip.out test_reverse.out test_split.out
 ###############################################################
 # The first rule is run if only make is typed
 msg:
@@ -54,6 +54,9 @@ string: $(CONSTRUCTORS) $(OPERATORS) $(SEARCH) $(IO) $(DYNAMIC) $(FUN)
 	./test_swap.out
 	./test_reallocate.out
 	./test_force_overflow.out
+	./test_zip.out
+	./test_reverse.out
+	./test_split.out
 	make clean
 
 tests:
@@ -75,6 +78,9 @@ valgrind: $(CONSTRUCTORS) $(OPERATORS) $(SEARCH) $(IO) $(DYNAMIC) $(FUN)
 	valgrind ./test_swap.out
 	valgrind ./test_reallocate.out
 	valgrind ./test_force_overflow.out
+	valgrind ./test_zip.out
+	valgrind ./test_reverse.out
+	valgrind ./test_split.out
 	make clean
 
 ###############################################################
@@ -109,7 +115,6 @@ test_%.o: string.h test_%.cpp
 # You will need to add your other test cases executables here.
 # For example: test_plus
 clean:
-	rm -f *.o
-	rm -f *.out
+	rm -f *.o *.out
 
 

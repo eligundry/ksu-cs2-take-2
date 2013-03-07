@@ -34,6 +34,13 @@ int main()
 		assert(test.getCapacity() == 4);
 	}
 
+	{
+		String test = "Eli Gundry";
+		assert(test.getCapacity() == DEFAULT_STRING_CAPACITY);
+		test.reallocate(35);
+		assert(test.getCapacity() == 35);
+	}
+
 	std::cout << "Completed testing string's reallocate function!" << std::endl;
 
 	return 0;

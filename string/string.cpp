@@ -351,6 +351,53 @@ void String::reallocate(const int cap)
 }
 
 /*
+ * Reverses the contents of a string
+ * Ex: str.reverse();
+ */
+String String::reverse() const
+{
+	String result(length + 1);
+
+	for (int index = length - 1; index >= 0; --index) {
+		result += s[index];
+	}
+
+	return result;
+}
+
+/*
+ * Splits a string on a specified char. Defaults to every char
+ * Ex: str.split();
+ * Ex: str.split(' ');
+ * Ex: str.split('a');
+ */
+std::vector<String> String::split(const char ch) const
+{
+	std::vector<String> result;
+
+	if (ch == '\0') {
+		for (int index = 0; index < length; ++index) {
+			result.push_back(s[index]);
+		}
+
+		return result;
+	}
+
+	String temp;
+
+	for (int index = 0; index < length; ++index) {
+		if (s[index] != ch) {
+			temp += s[index];
+		} else {
+			result.push_back(temp);
+			temp = s[++index];
+		}
+	}
+
+	return (result.push_back(temp), result);
+}
+
+/*
  * Swaps two strings
  * Ex: str1.swap(str2);
  */
@@ -370,7 +417,7 @@ void String::swap(String& str)
 }
 
 /*
- * Extracts the selected parts of the string based off of 1 or 2 indexes
+ * Extracts the selected parts of the string based off of an index and length
  * Ex: str.substr(1);
  * Ex: str.substr(1, 5);
  */
@@ -386,6 +433,27 @@ String String::substr(int left, int right) const
 
 	for (; left < right; ++left) {
 		result += s[left];
+	}
+
+	return result;
+}
+
+/*
+ * Zips two string together like a zipper
+ * Ex: str.zip(str2);
+ */
+String String::zip(const String& rhs) const
+{
+	String result(length + rhs.length + 1);
+
+	for (int index = 0; index < result.capacity; ++index) {
+		if (index < length) {
+			result += s[index];
+		}
+
+		if (index < rhs.length) {
+			result += rhs.s[index];
+		}
 	}
 
 	return result;

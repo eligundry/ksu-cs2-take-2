@@ -79,10 +79,19 @@ int main()
 	}
 
 	{
+		String s('a', 200);
+		assert(s == "a");
+		assert(s.isClosed());
+		assert(s.getLength() == 1);
+		assert(s.getCapacity() == 200);
+	}
+
+	{
 		String s("blah", 2);
 		assert(s == "blah");
 		assert(s.isClosed());
 		assert(s.getLength() == 4);
+		assert(s.getCapacity() == 5);
 	}
 
 	std::cout << "Completed testing string's C-Style string constructor." << std::endl;

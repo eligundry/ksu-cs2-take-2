@@ -20,6 +20,7 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <vector>
 
 #define DEFAULT_STRING_CAPACITY 128
 
@@ -208,6 +209,20 @@ public:
 	void reallocate(const int);
 
 	/*
+	 * Reverses the contents of a string
+	 * Ex: str.reverse();
+	 */
+	String reverse() const;
+
+	/*
+	 * Splits a string on a specified char. Defaults to every char
+	 * Ex: str.split();
+	 * Ex: str.split(' ');
+	 * Ex: str.split('a');
+	 */
+	std::vector<String> split(char ch = '\0') const;
+
+	/*
 	 * Strips NL chars from a string
 	 * Ex: str.strip_nl();
 	 */
@@ -225,6 +240,12 @@ public:
 	 * Ex: str.substr(1, 5);
 	 */
 	String substr(int, int right = 0) const;
+
+	/*
+	 * Zips two string together like a zipper
+	 * Ex: str.zip(str2);
+	 */
+	String zip(const String&) const;
 
 private:
 	char *s;

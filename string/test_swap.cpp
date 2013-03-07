@@ -29,9 +29,11 @@ int main()
 
 		assert(test[0] == "zero");
 		assert(test[0].getLength() == 4);
+		assert(test[0].isClosed());
 
 		assert(test[1] == "one");
 		assert(test[1].getLength() == 3);
+		assert(test[1].isClosed());
 	}
 
 	{
