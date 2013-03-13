@@ -31,7 +31,6 @@ int main()
 	{
 		String input;
 		in >> input;
-		std::cout << "'" << input << "' " << input.getLength() << std::endl;
 		assert(input == "Raw denim typewriter hella officia cillum, brooklyn vero lomo church-key beard ad pop-up.\n");
 	}
 

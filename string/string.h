@@ -21,6 +21,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <vector>
+#include <stdexcept>
 
 #define DEFAULT_STRING_CAPACITY 128
 
@@ -176,7 +177,7 @@ public:
 	 * Ex: str.findchar('c');
 	 * Ex: str.findchar('c', 10);
 	 */
-	int findchar(const char, int offset = 0) const;
+	int findchar(const char, int offset = 0, bool polarity = true) const;
 
 	/*
 	 * Finds how many times a string occurs in another string
@@ -203,10 +204,37 @@ public:
 	bool isClosed() const { return s[length] == '\0'; };
 
 	/*
+	 * Justifies a string to a specified width
+	 * Ex: str.justify(50);
+	 */
+	String justify(const int, const int) const;
+
+	/*
+	 * Finds the next blank space in a string
+	 * Ex: str.nextBlank();
+	 * Ex: str.nextBlank(3);
+	 */
+	int nextBlank(int start = 0) const;
+
+	/*
+	 * Finds the next non-blank char in a string
+	 * Ex: str.nextNonBlank();
+	 * Ex: str.nextNonBlank(3);
+	 */
+	int nextNonBlank(int start = 0) const;
+
+	/*
 	 * Reallocates string's capacity to a specified value
 	 * Ex: str.reallocate(40);
 	 */
 	void reallocate(const int);
+
+	/*
+	 * Replaces a char in a string with another char or string
+	 * Ex: str.replaceChar('\n', ' ');
+	 */
+	String replaceChar(const char, const char) const;
+	String replaceChar(const char, const String&) const;
 
 	/*
 	 * Reverses the contents of a string

@@ -142,14 +142,30 @@ bool String::operator < (const String& rhs) const
 	int index = 0;
 
 	for (; s[index] != '\0' && rhs.s[index] != '\0'; ++index) {
-		if (s[index] > rhs.s[index]) return false;
-		if (s[index] < rhs.s[index]) lessThan = true;
+		if (s[index] > rhs.s[index]) {
+			return false;
+		}
+
+		if (s[index] < rhs.s[index]) {
+			lessThan = true;
+		}
 	}
 
-	if (lessThan && (s[index] == '\0') && (rhs.s[index] == '\0')) return true;
-	if (lessThan && (rhs.s[index] == '\0')) return true;
-	if (!lessThan && (s[index] == '\0') && (rhs.s[index] == '\0')) return false;
-	if (s[index] == '\0') return true;
+	if (lessThan && (s[index] == '\0') && (rhs.s[index] == '\0')) {
+		return true;
+	}
+
+	if (lessThan && (rhs.s[index] == '\0')) {
+		return true;
+	}
+
+	if (!lessThan && (s[index] == '\0') && (rhs.s[index] == '\0')) {
+		return false;
+	}
+
+	if (s[index] == '\0') {
+		return true;
+	}
 
 	return false;
 }
@@ -160,15 +176,14 @@ bool String::operator < (const String& rhs) const
  */
 String String::operator + (const String& rhs) const
 {
-	int index = length;
 	String result(*this, length + rhs.length + 1);
 	result.length = length + rhs.length;
 
-	for (int rhsindex = 0; rhsindex < rhs.length; ++rhsindex, ++index) {
+	for (int rhsindex = 0, index = length; rhsindex < rhs.length; ++rhsindex, ++index) {
 		result.s[index] = rhs.s[rhsindex];
 	}
 
-	result.s[index] = '\0';
+	result.s[result.length] = '\0';
 
 	return result;
 }
@@ -253,20 +268,20 @@ String String::operator / (const int x) const
  */
 char String::operator [] (const int index) const
 {
-	if (index > length || index < 0) {
-		std::exit(0);
+	try {
+		return s[index];
+	} catch (const std::out_of_range& oor) {
+		std::cerr << "Out of Range error: " << oor.what() << std::endl;
 	}
-
-	return s[index];
 }
 
 char& String::operator [] (const int index)
 {
-	if (index > length || index < 0) {
-		std::exit(0);
+	try {
+		return s[index];
+	} catch (const std::out_of_range& oor) {
+		std::cerr << "Out of Range error: " << oor.what() << std::endl;
 	}
-
-	return s[index];
 }
 
 /*
@@ -306,10 +321,10 @@ std::ostream& operator << (std::ostream& out, const String& str)
  * Ex: str.findchar('c');
  * Ex: str.findchar('c', 10);
  */
-int String::findchar(const char find, const int offset) const
+int String::findchar(const char find, const int offset, const bool polarity) const
 {
 	for (int index = offset; index < length; ++index) {
-		if (s[index] == find) {
+		if ((s[index] == find) == polarity) {
 			return index;
 		}
 	}
@@ -341,6 +356,50 @@ int String::findstr(const String& find) const
 }
 
 /*
+ * Justifies a string to a specified width
+ * Ex: str.justify(50);
+ */
+String String::justify(const int left, const int right) const
+{
+	String result = *this;
+	int width = right - left,
+		index = 0;
+
+	while (result.length < width) {
+		index = result.nextBlank(index);
+
+		if (index == -1) {
+			index = result.nextBlank(index);
+		}
+
+		result = result.substr(0, index) + ' ' + result.substr(index + 1);
+		index = nextNonBlank(index);
+	}
+
+	return result;
+}
+
+/*
+ * Finds the next blank space in a string
+ * Ex: str.nextBlank();
+ * Ex: str.nextBlank(3);
+ */
+int String::nextBlank(const int start) const
+{
+	return findchar(' ', start);
+}
+
+/*
+ * Finds the next non-blank char in a string
+ * Ex: str.nextNonBlank();
+ * Ex: str.nextNonBlank(3);
+ */
+int String::nextNonBlank(const int start) const
+{
+	return findchar(' ', start, false);
+}
+
+/*
  * Reallocates string's capacity to a specified value
  * Ex: str.reallocate(40);
  */
@@ -348,6 +407,38 @@ void String::reallocate(const int cap)
 {
 	String temp(*this, cap);
 	swap(temp);
+}
+
+/*
+ * Replaces a char in a string with another char
+ * Ex: str.replaceChar('\n', ' ');
+ */
+String String::replaceChar(const char find, const char replace) const
+{
+	String result(*this, length + 1);
+
+	for (int index = 0; index < result.length; ++index) {
+		if (result.s[index] == find) {
+			result.s[index] = replace;
+		}
+	}
+
+	return result;
+}
+
+String String::replaceChar(const char find, const String& replace) const
+{
+	String result;
+
+	for (int index = 0; index < length; ++index) {
+		if (s[index] == find) {
+			result += replace;
+		} else {
+			result += s[index];
+		}
+	}
+
+	return result;
 }
 
 /*
@@ -424,6 +515,10 @@ void String::swap(String& str)
 String String::substr(int left, int right) const
 {
 	String result;
+
+	if (left < 0) {
+		left = 0;
+	}
 
 	if (right == 0 || (left + right) > length) {
 		right = length;

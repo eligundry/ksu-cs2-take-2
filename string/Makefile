@@ -16,6 +16,7 @@
 # Variables
 CPP     = g++
 OPTIONS = -g -Wall -W -Wunused -Wuninitialized -Wshadow
+VALGRIND = valgrind -q
 
 CONSTRUCTORS = test_default_ctor.out test_cstring_ctor.out test_copy_constructor.out
 OPERATORS = test_relational_operators.out test_add.out
@@ -23,22 +24,21 @@ SEARCH =  test_findstring.out test_findchar.out test_substr.out test_strip_nl.ou
 IO =  test_output.out test_input.out
 DYNAMIC = test_swap.out test_force_overflow.out test_reallocate.out
 FUN = test_subtract.out test_division.out test_multiply.out test_zip.out test_reverse.out test_split.out
+JUST = test_next_blank.out test_replace_char.out test_justify.out
 ###############################################################
 # The first rule is run if only make is typed
 msg:
 	@echo 'Targets are:'
 	@echo '  string'
 	@echo '  tests'
+	@echo '  valgrind'
 	@echo '  justify'
 	@echo '  clean'
 
 ###############################################################
 # Run all tests
-#
-# You will need to add your other below:
-# For example: ./test_plus
-#
-string: $(CONSTRUCTORS) $(OPERATORS) $(SEARCH) $(IO) $(DYNAMIC) $(FUN)
+
+string: $(CONSTRUCTORS) $(OPERATORS) $(SEARCH) $(IO) $(DYNAMIC) $(FUN) $(JUST)
 	./test_default_ctor.out
 	./test_cstring_ctor.out
 	./test_relational_operators.out
@@ -56,31 +56,37 @@ string: $(CONSTRUCTORS) $(OPERATORS) $(SEARCH) $(IO) $(DYNAMIC) $(FUN)
 	./test_force_overflow.out
 	./test_zip.out
 	./test_reverse.out
+	./test_next_blank.out
+	./test_replace_char.out
 	./test_split.out
+	./test_justify.out
 	make clean
 
 tests:
 	make string
 
-valgrind: $(CONSTRUCTORS) $(OPERATORS) $(SEARCH) $(IO) $(DYNAMIC) $(FUN)
-	valgrind ./test_default_ctor.out
-	valgrind ./test_cstring_ctor.out
-	valgrind ./test_relational_operators.out
-	valgrind ./test_add.out
-	valgrind ./test_subtract.out
-	valgrind ./test_multiply.out
-	valgrind ./test_division.out
-	valgrind ./test_findchar.out
-	valgrind ./test_findstring.out
-	valgrind ./test_substr.out
-	valgrind ./test_output.out
-	valgrind ./test_input.out
-	valgrind ./test_swap.out
-	valgrind ./test_reallocate.out
-	valgrind ./test_force_overflow.out
-	valgrind ./test_zip.out
-	valgrind ./test_reverse.out
-	valgrind ./test_split.out
+valgrind: $(CONSTRUCTORS) $(OPERATORS) $(SEARCH) $(IO) $(DYNAMIC) $(FUN) $(JUST)
+	$(VALGRIND) ./test_default_ctor.out
+	$(VALGRIND) ./test_cstring_ctor.out
+	$(VALGRIND) ./test_relational_operators.out
+	$(VALGRIND) ./test_add.out
+	$(VALGRIND) ./test_subtract.out
+	$(VALGRIND) ./test_multiply.out
+	$(VALGRIND) ./test_division.out
+	$(VALGRIND) ./test_findchar.out
+	$(VALGRIND) ./test_findstring.out
+	$(VALGRIND) ./test_substr.out
+	$(VALGRIND) ./test_output.out
+	$(VALGRIND) ./test_input.out
+	$(VALGRIND) ./test_swap.out
+	$(VALGRIND) ./test_reallocate.out
+	$(VALGRIND) ./test_force_overflow.out
+	$(VALGRIND) ./test_zip.out
+	$(VALGRIND) ./test_reverse.out
+	$(VALGRIND) ./test_next_blank.out
+	$(VALGRIND) ./test_replace_char.out
+	$(VALGRIND) ./test_split.out
+	$(VALGRIND) ./test_justify.out
 	make clean
 
 ###############################################################
