@@ -17,15 +17,18 @@
 
 #include "string.h"
 #include <cassert>
-#include <fstream>
 
 int main()
 {
 	{
 		String input, expected;
-		input = "This is not a test file";
-		expected = input.justify(0, 40);
-		assert(expected == "This     is    not    a    test    file.");
+
+		input = "This is my string, you like it?";
+		expected = input.justify(40);
+
+		assert(expected == "This   is   my   string,  you  like  it?");
+		assert(expected.getLength() == 40);
+		assert(expected.isClosed());
 	}
 
 	std::cout << "Completed testing string's justify method!" << std::endl;

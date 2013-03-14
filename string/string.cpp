@@ -359,21 +359,15 @@ int String::findstr(const String& find) const
  * Justifies a string to a specified width
  * Ex: str.justify(50);
  */
-String String::justify(const int left, const int right) const
+String String::justify(const int width) const
 {
 	String result = *this;
-	int width = right - left,
-		index = 0;
+	int index = 0;
 
 	while (result.length < width) {
 		index = result.nextBlank(index);
-
-		if (index == -1) {
-			index = result.nextBlank(index);
-		}
-
-		result = result.substr(0, index) + ' ' + result.substr(index + 1);
-		index = nextNonBlank(index);
+		result = result.substr(0, index + 1) + ' ' + result.substr(index + 1);
+		index = result.nextNonBlank(index);
 	}
 
 	return result;
@@ -386,17 +380,40 @@ String String::justify(const int left, const int right) const
  */
 int String::nextBlank(const int start) const
 {
-	return findchar(' ', start);
+	if (findchar(' ', 0) == -1) {
+		return -1;
+	}
+
+	for (int index = start; true; ++index) {
+		if (index >= length) {
+			index = 0;
+		}
+
+		if (s[index] == ' ') {
+			return index;
+		}
+	}
+
+	return -1;
 }
 
-/*
- * Finds the next non-blank char in a string
- * Ex: str.nextNonBlank();
- * Ex: str.nextNonBlank(3);
- */
 int String::nextNonBlank(const int start) const
 {
-	return findchar(' ', start, false);
+	if (findchar(' ', 0, false) == -1) {
+		return -1;
+	}
+
+	for (int index = start; true; ++index) {
+		if (index >= length){
+			index = 0;
+		}
+
+		if (s[index] != ' ') {
+			return index;
+		}
+	}
+
+	return -1;
 }
 
 /*
@@ -526,7 +543,7 @@ String String::substr(int left, int right) const
 		right += left;
 	}
 
-	for (; left < right; ++left) {
+	for (; left < right && s[left] != '\0'; ++left) {
 		result += s[left];
 	}
 

@@ -207,7 +207,7 @@ public:
 	 * Justifies a string to a specified width
 	 * Ex: str.justify(50);
 	 */
-	String justify(const int, const int) const;
+	String justify(const int) const;
 
 	/*
 	 * Finds the next blank space in a string
