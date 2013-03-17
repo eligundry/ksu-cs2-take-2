@@ -20,12 +20,11 @@
 
 void help();
 String justify(std::istream&, int, int);
-String getLine(std::istream&);
+String getWord(std::istream&);
 
 // ./justify 10 50 input.txt output.txt
 int main(int argc, char const* argv[])
 {
-	std::cout << argc << std::endl;
 	// Check the count of arguments
 	if (argc < 4) {
 		help();
@@ -37,7 +36,7 @@ int main(int argc, char const* argv[])
 	// Checks if input file is valid
 	if (!in) {
 		std::cerr << "Couldn't open file '" << argv[3] << "'. Please try again." << std::endl;
-		exit(1);
+		help();
 	}
 
 	int left = atoi(argv[1]),
@@ -45,9 +44,10 @@ int main(int argc, char const* argv[])
 
 	if (left < 0 || right > 99 || left >= right) {
 		std::cerr << "You're width parameters are invalid, please try again." << std::endl;
-		exit(1);
+		help();
 	}
 
+	// Justify text
 	String result = justify(in, left, right);
 
 	in.close();
@@ -60,7 +60,7 @@ int main(int argc, char const* argv[])
 
 		if (!out) {
 			std::cerr << "Couldn't open file '" << argv[4] << "' for writing. Please try again." << std::endl;
-			exit(1);
+			help();
 		}
 
 		out << result;
@@ -72,31 +72,47 @@ int main(int argc, char const* argv[])
 
 String justify(std::istream& in, int left, int right)
 {
-	String result, remainder, currentLine;
+	String result,
+		   currentLine,
+		   currentWord;
 
 	int width = right - left + 1;
 
-	for (int index = 0; index < left; ++index) {
+	for (int index = 0; index <= left; ++index) {
 		result += ' ';
 	}
 
-	result += '\n';
+	while (!in.eof()) {
+		currentWord = getWord(in);
+
+		if (currentLine.getLength() + currentWord.getLength() + 1 <= width) {
+			currentLine += currentWord;
+			currentLine += ' ';
+		} else {
+			result += currentLine.justify(width);
+			result += '\n';
+
+			for (int index = 0; index <= left; ++index) {
+				result += ' ';
+			}
+
+			currentLine = currentWord;
+		}
+	}
 
 	return result;
 }
 
-String getLine(std::istream& in)
+String getWord(std::istream& in)
 {
-	String result;
+	String word;
 	char ch = 0;
 
-	in.get(ch);
-
-	for (int index = 0; ch != '\n' && !in.fail(); ++index, in.get(ch)) {
-		result += ch;
+	for (in.get(ch); ch != '\0' && ch != ' ' && !in.eof() && ch != '\n'; in.get(ch)) {
+		word += ch;
 	}
 
-	return result;
+	return word;
 }
 
 void help()
