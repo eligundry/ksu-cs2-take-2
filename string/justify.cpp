@@ -1,7 +1,7 @@
 /*
  * =====================================================================================
  *
- *       Filename:  justifiy.cpp
+ *       Filename:  justify.cpp
  *
  *    Description:  Program to justify text
  *
@@ -19,53 +19,47 @@
 #include <fstream>
 
 void help();
-String justify(const String, String&, int, int);
+String justify(std::istream&, int, int);
 String getLine(std::istream&);
 
-// ./justifiy 10 50 input.txt output.txt
+// ./justify 10 50 input.txt output.txt
 int main(int argc, char const* argv[])
 {
+	std::cout << argc << std::endl;
 	// Check the count of arguments
-	if (argc < 3) {
+	if (argc < 4) {
 		help();
 	}
 
 	// Gets the input file
-	std::ifstream in(argv[2]);
+	std::ifstream in(argv[3]);
 
 	// Checks if input file is valid
 	if (!in) {
-		std::cerr << "Couldn't open file '" << argv[2] << "'. Please try again." << std::endl;
+		std::cerr << "Couldn't open file '" << argv[3] << "'. Please try again." << std::endl;
 		exit(1);
 	}
 
-	int left = int(argv[0]) - int('0'),
-		right = int(argv[1]) - int('0');
+	int left = atoi(argv[1]),
+		right = atoi(argv[2]);
 
-	String result,
-		   currentLine,
-		   remainder;
+	if (left < 0 || right > 99 || left >= right) {
+		std::cerr << "You're width parameters are invalid, please try again." << std::endl;
+		exit(1);
+	}
 
-	do {
-		if (!in.eof()) {
-			currentLine = getLine(in);
-		} else {
-			currentLine = "";
-		}
-
-		result += justify(currentLine, remainder, left, right);
-	} while (!in.eof() && remainder.getLength() == 0);
+	String result = justify(in, left, right);
 
 	in.close();
 
-	// Outputs the justifiy stuff
-	if (argc == 3) {
+	// Outputs the justify stuff
+	if (argc == 4) {
 		std::cout << result << std::endl;
-	} else if (argc == 4) {
-		std::ofstream out(argv[3]);
+	} else if (argc == 5) {
+		std::ofstream out(argv[4]);
 
 		if (!out) {
-			std::cerr << "Couldn't open file '" << argv[3] << "' for writing. Please try again." << std::endl;
+			std::cerr << "Couldn't open file '" << argv[4] << "' for writing. Please try again." << std::endl;
 			exit(1);
 		}
 
@@ -76,9 +70,9 @@ int main(int argc, char const* argv[])
 	return 0;
 }
 
-String justify(const String line, String& remainder, int left, int right)
+String justify(std::istream& in, int left, int right)
 {
-	String result;
+	String result, remainder, currentLine;
 
 	int width = right - left + 1;
 
@@ -108,7 +102,7 @@ String getLine(std::istream& in)
 void help()
 {
 	std::cout << "Usage: " << std::endl;
-	std::cout << "\t./justifiy [left] [right] [input] [output]" << std::endl;
+	std::cout << "\t./justify [left] [right] [input] [output]" << std::endl;
 	std::cout << "\tleft: integer value of the left offset." << std::endl;
 	std::cout << "\tright: integer value of the right offset." << std::endl;
 	std::cout << "\tinput: file of text to be justified." << std::endl;
