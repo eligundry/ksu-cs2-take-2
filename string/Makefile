@@ -50,7 +50,7 @@ string: $(CONSTRUCTORS) $(OPERATORS) $(SEARCH) $(IO) $(DYNAMIC) $(FUN) $(JUST)
 	./test_findstring.out
 	./test_substr.out
 	./test_output.out
-	#./test_input.out
+	./test_input.out
 	./test_swap.out
 	./test_reallocate.out
 	./test_force_overflow.out
@@ -98,7 +98,14 @@ string.o: string.h string.cpp
 ###############################################################
 # Compile Justify
 #
-justify: string.h string.cpp justify.cpp
+justify:
+	make string.o
+	make justify.o
+	make compile_justify
+	./justify.out 10 50 data2-1.txt
+	make clean
+
+compile_justify: string.h string.cpp justify.cpp
 	$(CPP) $(OPTIONS) -o justify.out justify.o string.o
 
 justify.o: justify.cpp string.h
