@@ -19,8 +19,8 @@
 #include <fstream>
 
 void help();
-String justify(std::istream&, int, int);
-String getWord(std::istream&);
+String justify(String, int, int);
+String getWord(String&);
 String insertSpaces(int, bool);
 
 // ./justify 10 50 input.txt output.txt
@@ -49,7 +49,9 @@ int main(int argc, char const* argv[])
 	}
 
 	// Justify text
-	String result = justify(in, left, right);
+	String input, result;
+	in >> input;
+	result = justify(input, left, right);
 
 	in.close();
 
@@ -71,7 +73,7 @@ int main(int argc, char const* argv[])
 	return 0;
 }
 
-String justify(std::istream& in, int left, int right)
+String justify(String str, int left, int right)
 {
 	String result,
 		   currentLine,
@@ -79,57 +81,46 @@ String justify(std::istream& in, int left, int right)
 
 	int width = right - left + 1;
 
+	// Indent the first line
 	result += insertSpaces(left, false);
 
-	while (!in.eof()) {
-		currentWord = getWord(in);
-		int currentLineLength = currentLine.getLength() + currentWord.getLength() + 1;
+	for (currentWord = getWord(str); currentWord != ""; currentWord = getWord(str)) {
+		if (currentWord.findstr("\n") == 2) {
+			currentLine += currentWord.substr(0, currentWord.findchar('\n'));
+			result += currentLine.justify(width);
+			result += insertSpaces(left, true);
+			currentLine = "";
+			currentWord = currentWord.substr(currentWord.findchar('\n') + 1);
+		} else if (currentWord.findstr("\n") == 1) {
+			std::vector<String> temp = currentWord.split('\n');
+			currentLine += temp[0];
+			result += currentLine.justify(width);
+			result += insertSpaces(left, true);
+			currentLine = "";
+			currentWord = temp[1];
+		}
 
-		switch (currentLine.findchar('\n')) {
-			case -1:
-				if (currentLineLength <= width) {
-					currentLine += currentWord;
-					currentLine += ' ';
-				} else {
-					result += currentLine.justify(width);
-					result += insertSpaces(left, true);
-					currentLine = currentWord;
-					currentLine += ' ';
-				}
-			break;
-			case 0:
-				result += insertSpaces(left, true);
-				currentLine = "";
-			break;
-			default:
-				currentLine += currentWord;
-
-				if (currentLineLength <= width) {
-					currentLine += ' ';
-				} else {
-					result += currentLine.justify(width);
-					result += insertSpaces(left, true);
-					currentLine = "";
-				}
+		if (currentLine.getLength() + currentWord.getLength() + 1 <= width) {
+			currentLine += currentWord;
+			currentLine += ' ';
+		} else {
+			result += currentLine.justify(width);
+			result += insertSpaces(left, true);
+			currentLine = currentWord;
+			currentLine += ' ';
 		}
 	}
 
 	return result;
 }
 
-String getWord(std::istream& in)
+String getWord(String& str)
 {
 	String word;
-	char ch = 0;
 
-	in.get(ch);
-
-	for (; ch != '\n' && ch != ' ' && !in.eof(); in.get(ch)) {
-		word += ch;
-	}
-
-	if (ch == '\n' && word.getLength() == 0) {
-		word = "\n";
+	if (str.getLength() != 0) {
+		word = str.substr(0, str.nextBlank());
+		str = str.substr(str.nextNonBlank(word.getLength()));
 	}
 
 	return word;
