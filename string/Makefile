@@ -50,7 +50,7 @@ string: $(CONSTRUCTORS) $(OPERATORS) $(SEARCH) $(IO) $(DYNAMIC) $(FUN) $(JUST)
 	./test_findstring.out
 	./test_substr.out
 	./test_output.out
-	./test_input.out
+	#./test_input.out
 	./test_swap.out
 	./test_reallocate.out
 	./test_force_overflow.out

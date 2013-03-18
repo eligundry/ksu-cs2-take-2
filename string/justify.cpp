@@ -21,6 +21,7 @@
 void help();
 String justify(std::istream&, int, int);
 String getWord(std::istream&);
+String insertSpaces(int, bool);
 
 // ./justify 10 50 input.txt output.txt
 int main(int argc, char const* argv[])
@@ -78,25 +79,38 @@ String justify(std::istream& in, int left, int right)
 
 	int width = right - left + 1;
 
-	for (int index = 0; index <= left; ++index) {
-		result += ' ';
-	}
+	result += insertSpaces(left, false);
 
 	while (!in.eof()) {
 		currentWord = getWord(in);
+		int currentLineLength = currentLine.getLength() + currentWord.getLength() + 1;
 
-		if (currentLine.getLength() + currentWord.getLength() + 1 <= width) {
-			currentLine += currentWord;
-			currentLine += ' ';
-		} else {
-			result += currentLine.justify(width);
-			result += '\n';
+		switch (currentLine.findchar('\n')) {
+			case -1:
+				if (currentLineLength <= width) {
+					currentLine += currentWord;
+					currentLine += ' ';
+				} else {
+					result += currentLine.justify(width);
+					result += insertSpaces(left, true);
+					currentLine = currentWord;
+					currentLine += ' ';
+				}
+			break;
+			case 0:
+				result += insertSpaces(left, true);
+				currentLine = "";
+			break;
+			default:
+				currentLine += currentWord;
 
-			for (int index = 0; index <= left; ++index) {
-				result += ' ';
-			}
-
-			currentLine = currentWord;
+				if (currentLineLength <= width) {
+					currentLine += ' ';
+				} else {
+					result += currentLine.justify(width);
+					result += insertSpaces(left, true);
+					currentLine = "";
+				}
 		}
 	}
 
@@ -108,11 +122,32 @@ String getWord(std::istream& in)
 	String word;
 	char ch = 0;
 
-	for (in.get(ch); ch != '\0' && ch != ' ' && !in.eof() && ch != '\n'; in.get(ch)) {
+	in.get(ch);
+
+	for (; ch != '\n' && ch != ' ' && !in.eof(); in.get(ch)) {
 		word += ch;
 	}
 
+	if (ch == '\n' && word.getLength() == 0) {
+		word = "\n";
+	}
+
 	return word;
+}
+
+String insertSpaces(int spaces, bool addNewLine)
+{
+	String result;
+
+	if (addNewLine) {
+		result += '\n';
+	}
+
+	for (int index = 0; index <= spaces; ++index) {
+		result += ' ';
+	}
+
+	return result;
 }
 
 void help()
