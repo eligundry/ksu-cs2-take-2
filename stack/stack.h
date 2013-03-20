@@ -27,7 +27,7 @@ public:
 	 * Default constructor for stack with no data
 	 * Ex: Stack<int> empty_stack;
 	 */
-	Stack(void): tos(0) {};
+	Stack(void);
 
 	/*
 	 * Stack's copy constructor
@@ -47,6 +47,20 @@ public:
 	Stack<T>& operator = (Stack<T>);
 
 	/*
+	 * Equality operator for stack
+	 * Ex: new_stack == copy_stack;
+	 * Ex: new_stack != copy_stack;
+	 */
+	bool operator == (const Stack<T>&) const;
+	bool operator != (const Stack<T>& rhs) const { return !(*this == rhs); };
+
+	/*
+	 * Returns the length of the stack
+	 * Ex: example_stack.getLength();
+	 */
+	int getLength(void) const { return length; };
+
+	/*
 	 * Determines if the current stack is empty
 	 * Ex: empty_stack.isEmpty();
 	 */
@@ -63,12 +77,6 @@ public:
 	 * Ex: example_stack.pop();
 	 */
 	T pop(void);
-
-	/*
-	 * Prints all items in the stack
-	 * Ex: example_stack.printAll();
-	 */
-	void printAll(void) const;
 
 	/*
 	 * Pushes an item to the top of the stack
@@ -91,7 +99,21 @@ public:
 private:
 	// Pointer to top of stack
 	Node<T> *tos;
+
+	// Number of items in the stack
+	int length;
 };
+
+/*
+ * Default constructor for stack with no data
+ * Ex: Stack<int> empty_stack;
+ */
+template <typename T>
+Stack<T>::Stack()
+{
+	tos = 0;
+	length = 0;
+}
 
 /*
  * Stack's copy constructor
@@ -105,6 +127,7 @@ Stack<T>::Stack(const Stack<T>& actual)
 	temptos = actual.tos;
 
 	tos = 0;
+	length = actual.length;
 
 	while (temptos != 0) {
 		tempNode = new Node<T>(temptos->data);
@@ -131,6 +154,8 @@ Stack<T>::~Stack()
 		tos = tos->next;
 		delete temp;
 	}
+
+	length = 0;
 }
 
 /*
@@ -142,6 +167,42 @@ Stack<T>& Stack<T>::operator = (Stack<T> rhs)
 {
 	swap(rhs);
 	return *this;
+}
+
+/*
+ * Equality operator for stack
+ * Ex: new_stack == copy_stack;
+ */
+template <typename T>
+bool Stack<T>::operator == (const Stack<T>& rhs) const
+{
+	if (length != rhs.length) {
+		return false;
+	}
+
+	Stack<T> l(*this), r(rhs);
+
+	while (!l.isEmpty() && !r.isEmpty()) {
+		if (l.pop() != r.pop()) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/*
+ * Outputs all the elements of the Stack
+ * Ex: out << example_stack;
+ */
+template <typename T>
+std::ostream& operator << (std::ostream& out, const Stack<T>& rhs)
+{
+	for (Stack<T> temp(rhs); !temp.isEmpty();) {
+		out << '[' << temp.pop() << "] ";
+	}
+
+	return out;
 }
 
 /*
@@ -164,24 +225,6 @@ bool Stack<T>::isFull() const
 }
 
 /*
- * Prints all items in the stack
- * Ex: example_stack.printAll();
- */
-template <typename T>
-void Stack<T>::printAll() const
-{
-	// Make copy of temp for output
-	Stack<T> temp(*this);
-
-	// Pop element one at a time for output
-	while (!temp.isEmpty()) {
-		std::cout << temp.pop() << ' ';
-	}
-
-	std::cout << std::endl;
-}
-
-/*
  * Pops the last item off of the stack
  * Ex: example_stack.pop();
  */
@@ -198,6 +241,7 @@ T Stack<T>::pop()
 	T result = tos->data;
 
 	tos = tos->next;
+	--length;
 
 	// Delete the element we just copied from the stack and return
 	delete temp;
@@ -222,6 +266,7 @@ void Stack<T>::push(const T& item)
 
 	// Set tos to our temp, essentially copying it
 	tos = temp;
+	++length;
 }
 
 /*
@@ -233,12 +278,15 @@ void Stack<T>::swap(Stack<T>& rhs)
 {
 	// Create temp node and copy tos into it
 	Node<T> *temp = tos;
+	int tempLength = length;
 
 	// Set tos to what you passed in
 	tos = rhs.tos;
+	length = rhs.length;
 
 	// Set what you passed in to temp
 	rhs.tos = temp;
+	rhs.length = tempLength;
 }
 
 #endif

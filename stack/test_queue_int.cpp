@@ -15,10 +15,16 @@
  * =====================================================================================
  */
 
-#include "node.h"
+#include "queue.h"
 
 int main()
 {
+	{
+		Queue<int> blank_queue;
+		assert(blank_queue == Queue<int>());
+		assert(blank_queue.getLength() == 0);
+	}
+
 	std::cout << "Completed testing queue!" << std::endl;
 
 	return 0;

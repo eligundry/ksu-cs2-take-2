@@ -5,8 +5,8 @@
 CPP          = g++
 CPP_FLAGS    = -g -Wall -W -Wunused -Wuninitialized -Wshadow
 INCLUDE_OPT  = -iquote . -iquote ../string
-TEST_1 = test_stack_int.out
-TEST_2 =
+TEST_1 = test_stack_int.out test_queue_int.out
+TEST_2 = test_output.out
 TEST_3 =
 
 #-------------------------------------------------------------------------------
@@ -67,6 +67,9 @@ assembler: stack.o string.o
 
 tests: ${TEST_1} ${TEST_2} ${TEST_3}
 	./test_stack_int.out
+	./test_queue_int.out
+	./test_output.out
+	make clean
 
 
 #============================================================================

@@ -27,7 +27,7 @@ public:
 	 * Default constructor for a queue with no data
 	 * Ex: Queue<int> empty_queue;
 	 */
-	Queue(void): front(0), back(0) {};
+	Queue(void);
 
 	/*
 	 * Copy constructor for queue
@@ -45,6 +45,20 @@ public:
 	 * Ex: Queue<int> new_queue = old_queue;
 	 */
 	Queue<T>& operator = (Queue<T>);
+
+	/*
+	 * Equality operator for queue
+	 * Ex: new_queue == old_queue;
+	 * Ex: new_queue != old_queue;
+	 */
+	bool operator == (const Queue<T>&) const;
+	bool operator != (const Queue<T>& rhs) const { return !(*this == rhs); };
+
+	/*
+	 * Returns the length of the queue
+	 * Ex. example_queue.getLength();
+	 */
+	int getLength(void) const { return length; };
 
 	/*
 	 * Determines if current queue is empty
@@ -79,7 +93,22 @@ public:
 private:
 	// Pointer to the front and back of the queue
 	Node<T> *front, *back;
+
+	// Length of the queue
+	int length;
 };
+
+/*
+ * Default constructor for a queue with no data
+ * Ex: Queue<int> empty_queue;
+ */
+template <typename T>
+Queue<T>::Queue()
+{
+	front = 0;
+	back = 0;
+	length = 0;
+}
 
 /*
  * Copy constructor for queue
@@ -92,6 +121,7 @@ Queue<T>::Queue(const Queue<T>& actual)
 
 	front = 0;
 	back = 0;
+	length = actual.length;
 
 	while (temp != 0) {
 		if (front == 0) {
@@ -117,6 +147,8 @@ Queue<T>::~Queue()
 		front = front->next;
 		delete temp;
 	}
+
+	length = 0;
 }
 
 /*
@@ -128,6 +160,43 @@ Queue<T>& Queue<T>::operator = (Queue<T> rhs)
 {
 	swap(rhs);
 	return *this;
+}
+
+/*
+ * Equality operator for queue
+ * Ex: new_stack == old_stack;
+ * Ex: new_stack != old_stack;
+ */
+template <typename T>
+bool Queue<T>::operator == (const Queue<T>& rhs) const
+{
+	if (length != rhs.length) {
+		return false;
+	}
+
+	Queue<T> l(*this), r(rhs);
+
+	while (!l.isEmpty() && !r.isEmpty()) {
+		if (l.dequeue() != r.dequeue()) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/*
+ * Outputs all the elements of the Stack
+ * Ex: out << example_stack;
+ */
+template <typename T>
+std::ostream& operator << (std::ostream& out, const Queue<T> rhs)
+{
+	for (Queue<T> temp(rhs); !temp.isEmpty();) {
+		out << '[' << temp.dequeue() << "] ";
+	}
+
+	return out;
 }
 
 /*
@@ -169,6 +238,8 @@ void Queue<T>::enqueue(const T& item)
 		back->next = temp;
 		back = temp;
 	}
+
+	++length;
 }
 
 /*
@@ -193,6 +264,8 @@ T Queue<T>::dequeue()
 		back = 0;
 	}
 
+	--length;
+
 	delete temp;
 	return result;
 }
@@ -206,16 +279,17 @@ void Queue<T>::swap(Queue<T>& rhs)
 {
 	// Creates a temp node and copy front into it
 	Node<T> *temp = rhs.front;
+	int tempLength = rhs.length;
 
 	// Set rhs to *this
 	rhs.front = front;
-
-	// Set front to temp
+	rhs.length = length;
 	front = temp;
 
 	// Swap the backs
 	temp = rhs.back;
 	back = temp;
+	length = tempLength;
 }
 
 #endif

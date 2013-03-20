@@ -21,40 +21,39 @@ int main()
 {
 	{
 		Stack<int> blank_stack;
-		std::cout << "Empty Stack Test" << std::endl
-				  << "Expected: " << std::endl
-				  << "Result: ";
-
-		blank_stack.printAll();
-		std::cout << std::endl;
+		assert(blank_stack == Stack<int>());
+		assert(blank_stack.getLength() == 0);
 	}
 
 	{
-		Stack<int> single_stack;
+		Stack<int> test, result, blank;
 
-		single_stack.push(1);
+		test.push(1);
+		result = test;
 
-		std::cout << "Single Item Stack Test" << std::endl
-				  << "Expected: 1" << std::endl
-				  << "Result: ";
+		assert(test == result);
+		assert(test != blank);
 
-		single_stack.printAll();
-		std::cout << std::endl;
+		assert(test.getLength() == 1);
+		assert(result.getLength() == 1);
 	}
 
 	{
-		Stack<int> int_stack;
+		Stack<int> test, result, blank;
 
-		int_stack.push(1);
-		int_stack.push(2);
-		int_stack.push(3);
+		test.push(1);
+		test.push(2);
+		test.push(3);
+		test.push(4);
+		test.push(5);
+		test.push(6);
+		result = test;
 
-		std::cout << "Move Item Stack Test" << std::endl
-				  << "Expected: 3 2 1" << std::endl
-				  << "Result: ";
+		assert(test == result);
+		assert(test != blank);
 
-		int_stack.printAll();
-		std::cout << std::endl;
+		assert(test.getLength() == 6);
+		assert(result.getLength() == 6);
 	}
 
 	std::cout << "Completed testing int stack!" << std::endl;
