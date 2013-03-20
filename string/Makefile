@@ -102,8 +102,8 @@ justify:
 	make string.o
 	make justify.o
 	make compile_justify
-	./justify.out 10 50 data2-1.txt
-	# make clean
+	./justify.out 10 50 data2-1.txt output.txt
+	make clean
 
 compile_justify: string.h string.cpp justify.cpp
 	$(CPP) $(OPTIONS) -o justify.out justify.o string.o

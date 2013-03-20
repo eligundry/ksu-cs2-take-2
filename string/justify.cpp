@@ -19,9 +19,8 @@
 #include <fstream>
 
 void help();
-String justify(String, int, int);
-String getWord(String&);
-String insertSpaces(int, bool);
+String justify(std::istream&, int, int);
+String insertSpaces(int);
 
 // ./justify 10 50 input.txt output.txt
 int main(int argc, char const* argv[])
@@ -49,9 +48,7 @@ int main(int argc, char const* argv[])
 	}
 
 	// Justify text
-	String input, result;
-	in >> input;
-	result = justify(input, left, right);
+	String result = justify(in, left, right);
 
 	in.close();
 
@@ -73,66 +70,43 @@ int main(int argc, char const* argv[])
 	return 0;
 }
 
-String justify(String str, int left, int right)
+String justify(std::istream& in, int left, int right)
 {
 	String result,
 		   currentLine,
 		   currentWord;
 
+	char word[300];
+
 	int width = right - left + 1;
 
-	// Indent the first line
-	result += insertSpaces(left, false);
+	while (!in.eof()) {
+		in >> word;
+		currentWord = String(word);
 
-	for (currentWord = getWord(str); currentWord != ""; currentWord = getWord(str)) {
-		if (currentWord.findstr("\n") == 2) {
-			currentLine += currentWord.substr(0, currentWord.findchar('\n'));
-			result += currentLine.justify(width);
-			result += insertSpaces(left, true);
-			currentLine = "";
-			currentWord = currentWord.substr(currentWord.findchar('\n') + 1);
-		} else if (currentWord.findstr("\n") == 1) {
-			std::vector<String> temp = currentWord.split('\n');
-			currentLine += temp[0];
-			result += currentLine.justify(width);
-			result += insertSpaces(left, true);
-			currentLine = "";
-			currentWord = temp[1];
+		if (in.eof()) {
+			break;
 		}
 
 		if (currentLine.getLength() + currentWord.getLength() + 1 <= width) {
-			currentLine += currentWord;
-			currentLine += ' ';
+			if (currentLine == "") {
+				currentLine = currentWord;
+			} else {
+				currentLine += ' ' + currentWord;
+			}
 		} else {
-			result += currentLine.justify(width);
-			result += insertSpaces(left, true);
+			currentLine = currentLine.justify(width);
+			result += insertSpaces(left) +  currentLine + '\n';
 			currentLine = currentWord;
-			currentLine += ' ';
 		}
 	}
 
 	return result;
 }
 
-String getWord(String& str)
-{
-	String word;
-
-	if (str.getLength() != 0) {
-		word = str.substr(0, str.nextBlank());
-		str = str.substr(str.nextNonBlank(word.getLength()));
-	}
-
-	return word;
-}
-
-String insertSpaces(int spaces, bool addNewLine)
+String insertSpaces(int spaces)
 {
 	String result;
-
-	if (addNewLine) {
-		result += '\n';
-	}
 
 	for (int index = 0; index <= spaces; ++index) {
 		result += ' ';
