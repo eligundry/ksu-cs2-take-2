@@ -45,12 +45,13 @@ test_%.o: ${STRING_DIR}string.h stack.h test_%.cpp
 #===========================================================================
 # Compile postfix
 
-postfix.o: postfix.cpp string.h stack.h
-	${CPP} ${CPP_FLAGS} -c postfix.cpp
+postfix: string.o postfix.o
+	${CPP} ${CPP_FLAGS} string.o postfix.o -o postfix.out
+	./postfix.out data3-1.txt data3-1-postfix.txt
+	./postfix.out data3-2.txt data3-2-postfix.txt
 
-
-postfix: stack.o string.o
-	${CPP} ${CPP_FLAGS} postfix.o string.o stack.o -o postfix
+postfix.o: stack.h postfix.cpp
+	${CPP} ${CPP_FLAGS} ${INCLUDE_OPT} -c postfix.cpp
 
 #===========================================================================
 # Compile assembler
@@ -77,3 +78,4 @@ tests: ${TEST_1} ${TEST_2} ${TEST_3}
 #============================================================================
 clean:
 	rm -f *.o *.out
+	rm -f *-postfix.txt

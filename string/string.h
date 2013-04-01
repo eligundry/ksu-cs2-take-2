@@ -282,5 +282,11 @@ private:
 
 };
 
+/*
+ * Get's line of text from an input file
+ * Ex: str.getline();
+ */
+String getline(std::istream&);
+
 #endif
 

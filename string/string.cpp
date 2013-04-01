@@ -570,3 +570,19 @@ String String::zip(const String& rhs) const
 
 	return result;
 }
+
+/*
+ * Get's line of text from an input
+ * Ex: getline(file);
+ */
+String getline(std::istream& in)
+{
+	String line;
+	char ch = '\0';
+
+	for (in.get(ch); ch != '\n' && !in.fail(); in.get(ch)) {
+		line += ch;
+	}
+
+	return line;
+}
