@@ -1,12 +1,12 @@
 /*
  * =====================================================================================
  *
- *       Filename:  test_stack_string.cpp
+ *       Filename:  test_queue_string.cpp
  *
- *    Description:  Tests stack with the string datatype
+ *    Description:  Tests queue with the string datatype
  *
  *        Version:  1.0
- *        Created:  03/18/2013 08:39:45 PM
+ *        Created:  04/01/2013 01:47:25 PM
  *       Revision:  none
  *       Compiler:  gcc
  *
@@ -15,22 +15,22 @@
  * =====================================================================================
  */
 
-#include "stack.h"
+#include "queue.h"
 #include "../string/string.h"
 
 int main()
 {
 	{
-		Stack<String> blank_stack;
-		assert(blank_stack == Stack<String>());
-		assert(blank_stack.getLength() == 0);
+		Queue<String> blank_queue;
+		assert(blank_queue == Queue<String>());
+		assert(blank_queue.getLength() == 0);
 	}
 
 	{
-		Stack<String> test, result, blank;
+		Queue<String> test, result, blank;
 		String item = "Eli";
 
-		test.push(item);
+		test.enqueue(item);
 		result = test;
 
 		assert(test == result);
@@ -41,16 +41,16 @@ int main()
 	}
 
 	{
-		Stack<String> test, result, blank;
+		Queue<String> test, result, blank;
 		String item[3];
 
 		item[0] = "Eli";
 		item[1] = "is";
 		item[2] = "awesome!";
 
-		test.push(item[0]);
-		test.push(item[1]);
-		test.push(item[2]);
+		test.enqueue(item[0]);
+		test.enqueue(item[1]);
+		test.enqueue(item[2]);
 
 		result = test;
 
@@ -61,7 +61,7 @@ int main()
 		assert(result.getLength() == 3);
 	}
 
-	std::cout << "Completed testing stack with string!" << std::endl;
+	std::cout << "Completed testing queue with the string datatype!" << std::endl;
 
 	return 0;
 }

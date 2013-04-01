@@ -17,6 +17,7 @@
 
 #include "stack.h"
 #include "queue.h"
+#include "../string/string.h"
 
 int main()
 {
@@ -44,6 +45,21 @@ int main()
 	}
 
 	{
+		Stack<String> str_stack;
+		String items[3];
+
+		items[0] = "Eli";
+		items[1] = "is";
+		items[2] = "awsome!";
+
+		str_stack.push(items[0]);
+		str_stack.push(items[1]);
+		str_stack.push(items[2]);
+
+		std::cout << str_stack << std::endl;
+	}
+
+	{
 		Queue<int> empty_queue;
 		std::cout << empty_queue << std::endl;
 	}
@@ -65,6 +81,21 @@ int main()
 		big_queue.enqueue(6);
 
 		std::cout << big_queue << std::endl;
+	}
+
+	{
+		Queue<String> str_queue;
+		String items[3];
+
+		items[0] = "Eli";
+		items[1] = "is";
+		items[2] = "awsome!";
+
+		str_queue.enqueue(items[0]);
+		str_queue.enqueue(items[1]);
+		str_queue.enqueue(items[2]);
+
+		std::cout << str_queue << std::endl;
 	}
 
 	std::cout << "Completed testing stack and queue's output functions!" << std::endl;
