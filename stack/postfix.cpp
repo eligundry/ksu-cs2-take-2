@@ -80,7 +80,7 @@ String to_postfix(const String& infix)
 
 	std::vector<String> infix_vec = infix.split(' ');
 
-	for (int index = 0; index < infix_vec.size(); ++index) {
+	for (unsigned int index = 0; index < infix_vec.size(); ++index) {
 		if (infix_vec[index] != '(') {
 			if (infix_vec[index] == ')') {
 				rhs = s.pop();
