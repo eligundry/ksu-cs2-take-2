@@ -48,9 +48,9 @@ int main()
 		item[1] = "is";
 		item[2] = "awesome!";
 
-		test.push(item[0]);
-		test.push(item[1]);
-		test.push(item[2]);
+		for (int i = 0; i < 3; ++i) {
+			test.push(item[i]);
+		}
 
 		result = test;
 

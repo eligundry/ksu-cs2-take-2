@@ -199,7 +199,7 @@ template <typename T>
 std::ostream& operator << (std::ostream& out, const Stack<T>& rhs)
 {
 	for (Stack<T> temp(rhs); !temp.isEmpty();) {
-		out << '[' << temp.pop() << "] ";
+		out << temp.pop();
 	}
 
 	return out;

@@ -5,6 +5,7 @@
 CPP          = g++
 CPP_FLAGS    = -g -Wall -W -Wunused -Wuninitialized -Wshadow
 INCLUDE_OPT  = -iquote . -iquote ../string
+VALGRIND = valgrind -q
 TEST_1 = test_stack_int.out test_stack_string.out test_queue_int.out test_queue_string.out
 TEST_2 = test_output.out
 TEST_3 =
@@ -45,22 +46,27 @@ test_%.o: ${STRING_DIR}string.h stack.h test_%.cpp
 #===========================================================================
 # Compile postfix
 
-postfix: string.o postfix.o
-	${CPP} ${CPP_FLAGS} string.o postfix.o -o postfix.out
-	./postfix.out data3-1.txt data3-1-postfix.txt
-	./postfix.out data3-2.txt data3-2-postfix.txt
-
 postfix.o: stack.h postfix.cpp
 	${CPP} ${CPP_FLAGS} ${INCLUDE_OPT} -c postfix.cpp
+
+postfix: string.o postfix.o
+	${CPP} ${CPP_FLAGS} string.o postfix.o -o postfix.out
+	${VALGRIND} ./postfix.out data3-0.txt data3-0-postfix.txt
+	${VALGRIND} ./postfix.out data3-1.txt data3-1-postfix.txt
+	${VALGRIND} ./postfix.out data3-2.txt data3-2-postfix.txt
 
 #===========================================================================
 # Compile assembler
 
-assembler.o: assembler.cpp string.h stack.h
-	${CPP} ${CPP_FLAGS} -c assembler.cpp
+assembler: string.o postfix.o assembler.o
+	make postfix
+	${CPP} ${CPP_FLAGS} string.o assembler.o -o assembler.out
+	./assembler.out data3-0-postfix.txt data3-0-assembler.txt
+	./assembler.out data3-1-postfix.txt data3-1-assembler.txt
+	./assembler.out data3-2-postfix.txt data3-2-assembler.txt
 
-assembler: stack.o string.o
-	${CPP} ${CPP_FLAGS} string.o stack.o -o postfix
+assembler.o: stack.h postfix.cpp
+	${CPP} ${CPP_FLAGS} ${INCLUDE_OPT} -c assembler.cpp
 
 
 #===========================================================================
@@ -78,4 +84,4 @@ tests: ${TEST_1} ${TEST_2} ${TEST_3}
 #============================================================================
 clean:
 	rm -f *.o *.out
-	rm -f *-postfix.txt
+	rm -f *-postfix.txt *-assembler.txt

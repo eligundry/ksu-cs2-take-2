@@ -28,7 +28,7 @@ public:
 	Node(): data(), next(0) {};
 
 	// Node constructor for element with data
-	Node(T item): data(item), next(0) {};
+	Node(const T& item): data(item), next(0) {};
 
 	// Data container for node
 	T data;
