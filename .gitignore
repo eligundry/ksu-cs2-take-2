@@ -2,3 +2,5 @@
 EVAL
 *.out
 *.o
+stack/*-postfix.txt
+stack/*-assembler.txt

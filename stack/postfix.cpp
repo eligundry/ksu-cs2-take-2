@@ -53,8 +53,8 @@ int main(int argc, char const* argv[])
 
 	to_postfix(infix_file, postfix_file);
 
-	postfix_file.close();
 	infix_file.close();
+	postfix_file.close();
 
 	return 0;
 }
@@ -95,6 +95,6 @@ void to_postfix(std::ifstream& in, std::ofstream& out)
 
 void help()
 {
-	std::cout << "Usage: ./postfix [input file] [output file]" << std::endl;
+	std::cerr << "Usage: ./postfix.out [input file] [output file]" << std::endl;
 	exit(1);
 }

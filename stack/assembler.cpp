@@ -19,6 +19,15 @@
 #include "stack.h"
 #include "../string/string.h"
 
+// Converts input to assembly
+void to_assembly(std::ifstream&, std::ofstream&);
+
+String assembly_operator(const String&);
+
+String i_to_s(int);
+
+String getToken(std::ifstream&);
+
 // Outputs help and exits
 void help(void);
 
@@ -30,8 +39,7 @@ int main(int argc, char const* argv[])
 		help();
 	}
 
-	std::ifstream postfix_file;
-	postfix_file.open(argv[1]);
+	std::ifstream postfix_file(argv[1]);
 
 	// If no infix file, show help and leave
 	if (!postfix_file) {
@@ -39,8 +47,7 @@ int main(int argc, char const* argv[])
 		help();
 	}
 
-	std::ofstream assembly_file;
-	assembly_file.open(argv[2]);
+	std::ofstream assembly_file(argv[2]);
 
 	// If file can't be opened, display help and exit
 	if (!assembly_file) {
@@ -48,10 +55,99 @@ int main(int argc, char const* argv[])
 		help();
 	}
 
-	assembly_file.close();
+	// Convert input to assembly
+	to_assembly(postfix_file, assembly_file);
+
 	postfix_file.close();
+	assembly_file.close();
 
 	return 0;
+}
+
+void to_assembly(std::ifstream& in, std::ofstream& out)
+{
+	Stack<String> s;
+	String lhs, rhs, op, tempvar, currentToken;
+	int tempN = 1;
+
+	while (!in.eof() || !s.isEmpty()) {
+		if (!in.eof()) {
+			currentToken = getToken(in);
+		} else {
+			break;
+		}
+
+		if (!in.eof() && currentToken != "+" && currentToken != "-" && currentToken != "*" && currentToken != "/") {
+			s.push(currentToken);
+		} else {
+			rhs = s.pop();
+			lhs = s.pop();
+
+			out << "LDR\t" << lhs << std::endl;
+
+			op = assembly_operator(currentToken);
+			out << op << rhs << std::endl;
+
+			tempvar = "TEMP" + i_to_s(tempN++);
+			s.push(tempvar);
+
+			out << "STR\t" << tempvar << std::endl;
+		}
+	}
+}
+
+String assembly_operator(const String& op)
+{
+	switch (op[0]) {
+		case '+':
+			return "ADD\t";
+			break;
+		case '-':
+			return "SUB\t";
+			break;
+		case '*':
+			return "MUL\t";
+			break;
+		case '/':
+			return "DIV\t";
+			break;
+		default:
+			return "UNDEFINED\t";
+	}
+}
+
+String i_to_s(int x)
+{
+	if (x == 0) {
+		return "0";
+	}
+
+	String result;
+
+	do {
+		result += (x % 10 + 48);
+		x /= 10;
+	} while (x > 0);
+
+	return result;
+}
+
+String getToken(std::ifstream& in)
+{
+	String result;
+	char token = '\0';
+
+	for (int i = 0; token != ' ' && !in.eof(); ++i) {
+		in.get(token);
+
+		if (token == '\n') {
+			return result;
+		} else if (token != ' ') {
+			result += token;
+		}
+	}
+
+	return result;
 }
 
 void help()
