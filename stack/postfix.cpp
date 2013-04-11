@@ -78,16 +78,17 @@ void to_postfix(std::ifstream& in, std::ofstream& out)
 
 		if (currentToken == ";") {
 			out << s;
+			out << ";";
 			out << std::endl;
 			s = Stack<String>();
 		} else if (currentToken == ")") {
 			rhs = s.pop();
 			op = s.pop();
 			lhs = s.pop();
-			s.push(lhs + ' ' + rhs + ' ' + op);
+			s.push(lhs + rhs + op);
 		} else {
 			if (currentToken != "(") {
-				s.push(currentToken);
+				s.push(currentToken + ' ');
 			}
 		}
 	}

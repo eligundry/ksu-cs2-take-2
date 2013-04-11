@@ -73,14 +73,19 @@ void to_assembly(std::ifstream& in, std::ofstream& out)
 	while (!in.eof() || !s.isEmpty()) {
 		if (!in.eof()) {
 			currentToken = getToken(in);
+			currentToken -= '\n';
 		} else {
 			break;
 		}
 
-		if (!in.eof() && currentToken != "+" && currentToken != "-"
-				&& currentToken != "*" && currentToken != "/") {
+		if (currentToken == ";") {
+			out << "===============================" << std::endl;
+			tempN = 1;
+		}
+
+		if (!in.eof() && currentToken != "+" && currentToken != "-" && currentToken != "*" && currentToken != "/") {
 			s.push(currentToken);
-		} else {
+		} else if (!in.eof()) {
 			rhs = s.pop();
 			lhs = s.pop();
 
@@ -141,8 +146,8 @@ String getToken(std::ifstream& in)
 	for (int i = 0; token != ' ' && !in.eof(); ++i) {
 		in.get(token);
 
-		if (token == '\n') {
-			return result;
+		if (token == ';') {
+			return ";";
 		} else if (token != ' ') {
 			result += token;
 		}
