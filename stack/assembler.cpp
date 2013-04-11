@@ -77,7 +77,8 @@ void to_assembly(std::ifstream& in, std::ofstream& out)
 			break;
 		}
 
-		if (!in.eof() && currentToken != "+" && currentToken != "-" && currentToken != "*" && currentToken != "/") {
+		if (!in.eof() && currentToken != "+" && currentToken != "-"
+				&& currentToken != "*" && currentToken != "/") {
 			s.push(currentToken);
 		} else {
 			rhs = s.pop();

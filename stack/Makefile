@@ -46,14 +46,14 @@ test_%.o: ${STRING_DIR}string.h stack.h test_%.cpp
 #===========================================================================
 # Compile postfix
 
-postfix.o: stack.h postfix.cpp
-	${CPP} ${CPP_FLAGS} ${INCLUDE_OPT} -c postfix.cpp
-
 postfix: clean string.o postfix.o
 	${CPP} ${CPP_FLAGS} string.o postfix.o -o postfix.out
 	${VALGRIND} ./postfix.out data3-0.txt data3-0-postfix.txt
 	${VALGRIND} ./postfix.out data3-1.txt data3-1-postfix.txt
 	${VALGRIND} ./postfix.out data3-2.txt data3-2-postfix.txt
+
+postfix.o: stack.h postfix.cpp
+	${CPP} ${CPP_FLAGS} ${INCLUDE_OPT} -c postfix.cpp
 
 #===========================================================================
 # Compile assembler
@@ -72,11 +72,11 @@ assembler.o: stack.h postfix.cpp
 # Run test programs
 
 tests: ${TEST_1} ${TEST_2} ${TEST_3}
-	./test_stack_int.out
-	./test_stack_string.out
-	./test_queue_int.out
-	./test_queue_string.out
-	./test_output.out
+	${VALGRIND} ./test_stack_int.out
+	${VALGRIND} ./test_stack_string.out
+	${VALGRIND} ./test_queue_int.out
+	${VALGRIND} ./test_queue_string.out
+	${VALGRIND} ./test_output.out
 	make clean
 
 #============================================================================
