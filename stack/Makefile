@@ -50,7 +50,7 @@ postfix: clean string.o postfix.o
 	${CPP} ${CPP_FLAGS} string.o postfix.o -o postfix.out
 	${VALGRIND} ./postfix.out data3-0.txt data3-0-postfix.txt
 	${VALGRIND} ./postfix.out data3-1.txt data3-1-postfix.txt
-	${VALGRIND} ./postfix.out data3-2.txt data3-2-postfix.txt
+	${VALGRIND} ./postfix.out data3-2-1.txt data3-2-1-postfix.txt
 
 postfix.o: stack.h postfix.cpp
 	${CPP} ${CPP_FLAGS} ${INCLUDE_OPT} -c postfix.cpp
@@ -62,7 +62,7 @@ assembler: clean string.o postfix.o assembler.o postfix
 	${CPP} ${CPP_FLAGS} string.o assembler.o -o assembler.out
 	${VALGRIND} ./assembler.out data3-0-postfix.txt data3-0-assembler.txt
 	${VALGRIND} ./assembler.out data3-1-postfix.txt data3-1-assembler.txt
-	${VALGRIND} ./assembler.out data3-2-postfix.txt data3-2-assembler.txt
+	${VALGRIND} ./assembler.out data3-2-1-postfix.txt data3-2-1-assembler.txt
 
 assembler.o: stack.h postfix.cpp
 	${CPP} ${CPP_FLAGS} ${INCLUDE_OPT} -c assembler.cpp
