@@ -79,7 +79,7 @@ void to_assembly(std::ifstream& in, std::ofstream& out)
 		}
 
 		if (currentToken == ";") {
-			out << "===============================" << std::endl;
+			out << "=============================================" << std::endl;
 			tempN = 1;
 		}
 
@@ -124,7 +124,7 @@ String assembly_operator(const String& op)
 
 String i_to_s(int x)
 {
-	if (x == 0) {
+	if (!x) {
 		return "0";
 	}
 

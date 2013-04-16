@@ -81,5 +81,4 @@ tests: ${TEST_1} ${TEST_2} ${TEST_3}
 
 #============================================================================
 clean:
-	rm -f *.o *.out
-	rm -f *-postfix.txt *-assembler.txt
+	rm -f *.o *.out *-postfix.txt *-assembler.txt
