@@ -4,7 +4,13 @@
 # Variables
 CPP      = g++
 #CPP_OPTS = -g -Wall
-CPP_OPTS = -g -Wall -W -Wunused -Wuninitialized -Wshadow 
+CPP_OPTS = -g -Wall -W -Wunused -Wuninitialized -Wshadow
+
+# Test files
+TESTS = test_destructor.out test_copy.out test_assignment.out test_swap.out
+
+# Valgrind Command
+VALGRIND = valgrind -q
 
 ###############################################################
 # The first rule is run of only make is typed
@@ -12,14 +18,17 @@ msg:
 	@echo 'Targets are:'
 	@echo '  profiler:'
 	@echo '  sort:'
-	@echo '  p-sort:'    
+	@echo '  p-sort:'
 	@echo '  gprof:'
+	@echo '  tests:'
 	@echo '  clean:'
 
 ###############################################################
-profiler : main.o ASTree.o 
-	$(CPP) $(CPP_OPTS) -o profiler main.o ASTree.o 
-  
+profiler : clean main.o ASTree.o
+	$(CPP) $(CPP_OPTS) -o profiler main.o ASTree.o
+	$(VALGRIND) ./profiler simple.cpp.xml
+	$(VALGRIND) ./profiler sort.cpp.xml
+
 main.o : main.cpp ASTree.hpp
 	$(CPP) $(CPP_OPTS) -c main.cpp
 
@@ -60,12 +69,27 @@ gprof: CPP_OPTS   = -g -Wall -pg
 gprof: clean sort
 	@echo -n ''
 
+#==============================================================
+# Run tests
+
+test_%.out: ASTree.o test_%.o
+	$(CPP) $(CPP_OPTS) test_$*.o -o test_$*.out
+
+test_%.o: test_%.cpp
+	$(CPP) $(CPP_OPTS) -c test_$*.cpp
+
+tests: $(TESTS)
+	$(VALGRIND) ./test_destructor.out
+	$(VALGRIND) ./test_copy.out
+	$(VALGRIND) ./test_assignment.out
+	$(VALGRIND) ./test_swap.out
+
+
 ###############################################################
 #This will clean up everything via "make clean"
 clean:
 	rm -f profiler
 	rm -f sort
-	rm -f *.o
+	rm -f *.o *.out
 	rm -f p-*
-	rm -f gmon.out
 

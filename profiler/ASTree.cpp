@@ -26,7 +26,7 @@ void srcML::swap(srcML& b) {
     std::string t_header = header;
     header = b.header;
     b.header = t_header;
-    
+
     ASTree *temp = tree;
     tree = b.tree;
     b.tree = temp;
@@ -45,12 +45,25 @@ srcML& srcML::operator=(srcML rhs) {
 //
 std::istream& operator>>(std::istream& in, srcML& src){
     char ch;
-    if (!in.eof()) in >> ch;
+
+    if (!in.eof()) {
+    	in >> ch;
+	}
+
     src.header = readUntil(in, '>');
-    if (!in.eof()) in >> ch;
-    if (src.tree) delete src.tree;
+
+    if (!in.eof()) {
+		in >> ch;
+	}
+
+    if (src.tree) {
+		delete src.tree;
+	}
+
     src.tree = new ASTree(category, readUntil(in, '>'));
+
     src.tree->read(in);
+
     return in;
 }
 
@@ -103,7 +116,7 @@ void srcML::lineCount(const std::string& profilename) {
     tree->lineCount(profilename);
 }
 
-    
+
 
 
 /////////////////////////////////////////////////////////////////////
@@ -130,22 +143,46 @@ ASTree::ASTree(nodes t, const std::string& s) {
 ///  NOTE: Can implement destructor implemented in .h file or here.
 ///
 
+ASTree::~ASTree()
+{
+	if (!child.empty()) {
+		std::list<ASTree*>::iterator index = child.begin();
 
-
+		while (index != child.end()) {
+			delete *index++;
+		}
+	}
+}
 
 /////////////////////////////////////////////////////////////////////
 // Copy Constructor for ASTree
 //
-ASTree::ASTree(const ASTree& actual) {
-    //NEED TO IMPLEMENT
-}
+ASTree::ASTree(const ASTree& actual)
+{
+	// Copy member variables
+	nodeType = actual.nodeType;
+	tag = actual.tag;
+	closeTag = actual.closeTag;
+	text = actual.text;
 
+	// Copy the children
+    for (std::list<ASTree*>::const_iterator it = actual.child.begin(); it != actual.child.end(); ++it) {
+        child.push_back(new ASTree(**it));
+	}
+}
 
 /////////////////////////////////////////////////////////////////////
 // Constant time swap for ASTree
 //
 void ASTree::swap(ASTree& b) {
-    //NEED TO IMPLEMENT
+	// Swap the non-container members
+    std::swap(nodeType, b.nodeType);
+    std::swap(tag, b.tag);
+    std::swap(closeTag, b.closeTag);
+    std::swap(text, b.text);
+
+    // Use vector swap, constant time, not O(n)
+    child.swap(b.child);
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -194,13 +231,28 @@ std::string ASTree::getName() const {
 //  Adds in the includes and profile variables in a main file.
 //
 void ASTree::mainHeader(std::vector<std::string>& profileNames) {
+	std::cerr << "1" << std::endl;
+	std::list<ASTree*>::iterator index = child.begin();
 
-    //NEED TO IMPLEMENT
-    //Skip down a couple lines.
-    //For each file profile name, add a new node with a profile 
-    // declaration.
-    //Also, add in the profile declaration for functions and the
-    //include for profile.hpp
+	// Iterate until I find a function!
+	while ((*index)->tag != "function") {
+		++index;
+	}
+	std::cerr << "2" << std::endl;
+
+	std::string profileString("#include \"profile.hpp\"\nprofile functions;\n");
+
+	std::cerr << "3" << std::endl;
+	for (std::vector<std::string>::iterator it = profileNames.begin(); it < profileNames.end(); ++it) {
+	   profileString = profileString + "profile " + *it + ";\n";
+	}
+	std::cerr << "4" << std::endl;
+
+	profileString += "\n";
+
+	std::cerr << "5" << std::endl;
+	child.insert(index, new ASTree(token, profileString));
+	std::cerr << "6" << std::endl;
 }
 
 
@@ -208,15 +260,24 @@ void ASTree::mainHeader(std::vector<std::string>& profileNames) {
 //  Adds in the includes and profile variables for non-main files
 //
 void ASTree::fileHeader(std::vector<std::string>& profileNames) {
+	// iterate until reaching function tag
+	std::list<ASTree*>::iterator itr = child.begin();
+	while((*itr)->tag != "function") {
+		++itr;
+	}
 
-    //NEED TO IMPLEMENT
-    //Skip down a couple lines.
-    //For each file profile name, add a new node with a profile 
-    // extern declaration.
-    //Also, add in the extern declaration for functions and the
-    //include for profile.hpp
-    
+	// create string to insert
+	std::string profileString("#include \"profile.hpp\"\nextern profile functions;\n");
 
+	for(std::vector<std::string>::iterator nameItr = profileNames.begin(); nameItr < profileNames.end(); ++nameItr) {
+
+	profileString = profileString + "extern profile " + *nameItr + ";\n";
+	}
+
+	profileString += "\n";
+
+	// insert new child AStree
+	child.insert(itr, new ASTree(token, profileString));
 }
 
 
@@ -225,16 +286,16 @@ void ASTree::fileHeader(std::vector<std::string>& profileNames) {
 // Assumes only one return at end of main body.
 //
 void ASTree::mainReport(std::vector<std::string>& profileNames) {
-    
+
     //NEED TO IMPLEMENT
-    
+
     //Find the function with name main and then start from the end.
     //Find the main - function with name of "main"
     //Then start from the end() of this function and iterate
     // backwards until you find a return stmt.   You'll want
     // to insert the report statements before this return.
-    
-    
+
+
 }
 
 
@@ -243,9 +304,9 @@ void ASTree::mainReport(std::vector<std::string>& profileNames) {
 //  Assumes no nested functions.
 //
 void ASTree::funcCount() {
-    
+
     //NEED TO IMPLEMENT
-    
+
     // Check for function, constructor, destructor.
     // Find the function name and insert the count.
 
@@ -257,18 +318,18 @@ void ASTree::funcCount() {
 //   Assumes all construts (for, while, if) have { }.
 //
 void ASTree::lineCount(const std::string& profileNames) {
-    
+
     //NEED TO IMPLEMENT
-    
+
     // Check for expr_stmt and call
-    
-    
+
+
 }
 
 
 /////////////////////////////////////////////////////////////////////
 // Read in and construct ASTree
-// REQUIRES: '>' was previous charater read 
+// REQUIRES: '>' was previous charater read
 //           && this == new ASTree(category, "TagName")
 //
 //
@@ -276,43 +337,83 @@ std::istream& ASTree::read(std::istream& in) {
     ASTree *subtree;
     std::string temp, Lws, Rws;
     char ch;
-    if (!in.eof()) in.get(ch);
+
+    std::cerr << "1" << std::endl;
+
+    if (!in.eof()) {
+    	in.get(ch);
+	}
+
+    std::cerr << "2" << std::endl;
+
     while (!in.eof()) {
-        if (ch == '<') {                                     //Found a tag 
+		std::cerr << "3" << std::endl;
+        if (ch == '<') {                                     //Found a tag
             temp = readUntil(in, '>');
+			std::cerr << "4" << std::endl;
+
             if (temp[0] == '/') {
                 closeTag = temp;
                 break;                                       //Found close tag, stop recursion
             }
+			std::cerr << "5" << std::endl;
+
             subtree = new ASTree(category, temp);            //New subtree
+
+			std::cerr << "6" << std::endl;
+
             subtree->read(in);                               //Read it in
+
+			std::cerr << "7" << std::endl;
+
             in.get(ch);
+
+			std::cerr << "8" << std::endl;
+
             child.push_back(subtree);                        //Add it to child
+
+			std::cerr << "9" << std::endl;
         } else {                                             //Found a token
             temp = std::string(1, ch) + readUntil(in, '<');  //Read it in.
+
+			std::cerr << "10" << std::endl;
+
             std::vector<std::string> tokenList = tokenize(temp);
+
+			std::cerr << "11" << std::endl;
+
             for (std::vector<std::string>::const_iterator i = tokenList.begin(); i != tokenList.end(); ++i) {
-                if (isspace((*i)[0])) {
+				std::cerr << "12" << std::endl;
+
+                if (isspace(((*i)[0]))) {
+					std::cerr << "13-1" << std::endl;
                     subtree = new ASTree(whitespace, *i);
+					std::cerr << "13-2" << std::endl;
                 } else {
-                    subtree = new ASTree(token, *i);                   
+                    subtree = new ASTree(token, *i);
+					std::cerr << "14" << std::endl;
                 }
+
                 child.push_back(subtree);
+				std::cerr << "15" << std::endl;
             }
+
             ch = '<';
         }
     }
+	std::cerr << "16" << std::endl;
+
     return in;
 }
 
 
 /////////////////////////////////////////////////////////////////////
-// Print an ASTree 
+// Print an ASTree
 // REQUIRES: indent >= 0
 //
 std::ostream& ASTree::print(std::ostream& out, int indent) const {
     if (TAGS) out << std::setw(indent) << " ";
-    if (TAGS) out << "<" << tag << ">" << std::endl; 
+    if (TAGS) out << "<" << tag << ">" << std::endl;
     for (std::list<ASTree*>::const_iterator i = child.begin(); i != child.end(); ++i) {
         switch ((*i)->nodeType) {
             case category:
@@ -332,9 +433,9 @@ std::ostream& ASTree::print(std::ostream& out, int indent) const {
     return out;
 }
 
-    
-    
-    
+
+
+
 
 /////////////////////////////////////////////////////////////////////
 // Utilities
@@ -349,7 +450,7 @@ bool isStopTag(std::string tag) {
     if (tag == "comment type\"block\"") return true;
     if (tag == "comment type\"line\"") return true;
     if (tag == "macro") return true;
-        
+
     return false;
 }
 
@@ -385,7 +486,7 @@ std::string unEscape(std::string s) {
 
 /////////////////////////////////////////////////////////////////////
 // Given: s == "   a + c  "
-// RetVal == {"   ", "a", " ", "+", "c", " "}  
+// RetVal == {"   ", "a", " ", "+", "c", " "}
 //
 std::vector<std::string> tokenize(const std::string& s) {
     std::vector<std::string> result;
@@ -411,5 +512,5 @@ std::vector<std::string> tokenize(const std::string& s) {
     }
     return result;
 }
-    
+
 

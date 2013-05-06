@@ -32,11 +32,11 @@ int main(int argc, char *argv[]) {
         std::cerr << "profile main.cpp.xml file1.cpp.xml file2.cpp.xml" << std::endl << std::endl;
         return(1);
     }
-    
+
     srcML                     code;              //The source code to be profiled.
     std::vector<std::string>  files;             //The list of file names (without .xml)
     std::vector<std::string>  profileNames;      //The list of profile names to be used.
-    
+
     for (int i = 1; i < argc; ++i) {
         std::string filename = argv[i];
         files.push_back(filename);
@@ -44,38 +44,38 @@ int main(int argc, char *argv[]) {
         std::replace(filename.begin(), filename.end(), '.', '_');  // Change . to _
         profileNames.push_back(filename);
     }
-    
+
     std::ifstream inFile(files[0].c_str());    //Read in the main.
-    inFile >> code;                              
+    inFile >> code;
     inFile.close();
-    
+
     code.mainHeader(profileNames);             //Add in main header info
     code.mainReport(profileNames);             //Add in the report
     code.funcCount();                          //Count funciton invocations
     code.lineCount(profileNames[0]);           //Count line invocations
-    
+
     std::string outFileName = "p-" + files[0];
     outFileName = outFileName.substr(0, outFileName.find(".xml"));  //Remove .xml
     std::ofstream outFile(outFileName.c_str());
     outFile << code << std::endl;
     outFile.close();
-    
+
     for (unsigned i = 1; i < files.size(); ++i) {  //Read in the rest of the files.
         inFile.open(files[i].c_str());
         inFile >> code;
         inFile.close();
-        
+
         code.fileHeader(profileNames);             //Add in file header info
         code.funcCount();                          //Count funciton invocations
         code.lineCount(profileNames[i]);           //Count line invocations
-        
+
         outFileName = "p-" + files[i];
         outFileName = outFileName.substr(0, outFileName.find(".xml"));  //Remove .xml
         outFile.open(outFileName.c_str());
         outFile << code << std::endl;
         outFile.close();
     }
-    
+
 	return 0;
 }
 
